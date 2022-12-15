@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/presentation/page/credential/sign_up_page.dart';
+import 'package:insta_clone/features/presentation/page/main_screen/main_screen.dart';
 import 'package:insta_clone/features/presentation/widgets/button_container_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/form_container_widget.dart';
-
 
 class SignInPage extends StatelessWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -23,7 +23,11 @@ class SignInPage extends StatelessWidget {
               child: Container(),
               flex: 2,
             ),
-            Center(child: SvgPicture.asset("assets/ic_instagram.svg", color: primaryColor,)),
+            Center(
+                child: SvgPicture.asset(
+              "assets/ic_instagram.svg",
+              color: primaryColor,
+            )),
             sizeVer(30),
             FormContainerWidget(
               hintText: "Email",
@@ -37,7 +41,14 @@ class SignInPage extends StatelessWidget {
             ButtonContainerWidget(
               color: blueColor,
               text: "Sign In",
-              onTapListener: () {},
+              onTapListener: () {
+                Navigator.push<void>(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const MainScreen(),
+                  ),
+                );
+              },
             ),
             Flexible(
               child: Container(),
@@ -49,15 +60,21 @@ class SignInPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Don't have and account? ", style: TextStyle(color: primaryColor),),
+                Text(
+                  "Don't have and account? ",
+                  style: TextStyle(color: primaryColor),
+                ),
                 InkWell(
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignUpPage()), (route) => false);
-
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpPage()),
+                        (route) => false);
                   },
-                  child:  Text(
+                  child: Text(
                     "Sign Up.",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: primaryColor),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: primaryColor),
                   ),
                 ),
               ],

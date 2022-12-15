@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_clone/consts.dart';
+import 'package:insta_clone/features/presentation/page/post/comment/comment_page.dart';
+import 'package:insta_clone/features/presentation/page/post/update_post_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,11 +14,18 @@ class HomePage extends StatelessWidget {
       backgroundColor: backGroundColor,
       appBar: AppBar(
         backgroundColor: backGroundColor,
-        title: SvgPicture.asset("assets/ic_instagram.svg", color: primaryColor, height: 32,),
+        title: SvgPicture.asset(
+          "assets/ic_instagram.svg",
+          color: primaryColor,
+          height: 32,
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: Icon(Icons.messenger_outline_outlined, color: primaryColor,),
+            child: Icon(
+              Icons.messenger_outline_outlined,
+              color: primaryColor,
+            ),
           )
         ],
       ),
@@ -34,15 +43,24 @@ class HomePage extends StatelessWidget {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: secondaryColor,
-                        shape: BoxShape.circle
-                      ),
+                          color: secondaryColor, shape: BoxShape.circle),
                     ),
                     sizeHor(10),
-                    Text("Username", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),)
+                    Text(
+                      "Username",
+                      style: TextStyle(
+                          color: primaryColor, fontWeight: FontWeight.bold),
+                    )
                   ],
                 ),
-                Icon(Icons.more_vert, color: primaryColor,)
+                GestureDetector(
+                    onTap: () {
+                      _openBottomModalSheet(context);
+                    },
+                    child: Icon(
+                      Icons.more_vert,
+                      color: primaryColor,
+                    ))
               ],
             ),
             sizeVer(10),
@@ -57,33 +75,135 @@ class HomePage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.favorite, color: primaryColor,),
+                    Icon(
+                      Icons.favorite,
+                      color: primaryColor,
+                    ),
                     sizeHor(10),
-                    Icon(Icons.message, color: primaryColor,),
+                    Icon(
+                      Icons.message,
+                      color: primaryColor,
+                    ),
                     sizeHor(10),
-                    Icon(Icons.send, color: primaryColor,),
+                    Icon(
+                      Icons.send,
+                      color: primaryColor,
+                    ),
                   ],
                 ),
-                Icon(Icons.bookmark_border, color: primaryColor,)
-
+                Icon(
+                  Icons.bookmark_border,
+                  color: primaryColor,
+                )
               ],
             ),
             sizeVer(10),
             Row(
               children: [
-                Text("Username", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),),
+                Text(
+                  "Username",
+                  style: TextStyle(
+                      color: primaryColor, fontWeight: FontWeight.bold),
+                ),
                 sizeHor(10),
-                Text("some description", style: TextStyle(color: primaryColor),),
+                Text(
+                  "some description",
+                  style: TextStyle(color: primaryColor),
+                ),
               ],
             ),
             sizeVer(10),
-            Text("View all 10 comments", style: TextStyle(color: darkGreyColor),),
+            GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, PageConst.commentPage);
+                  // Navigator.push(context,MaterialPageRoute(builder: (context) => CommentPage()));
+                },
+                child: Text(
+                  "View all 10 comments",
+                  style: TextStyle(color: darkGreyColor),
+                )),
             sizeVer(10),
-            Text("08/5/2022", style: TextStyle(color: darkGreyColor),),
-
+            Text(
+              "08/5/2022",
+              style: TextStyle(color: darkGreyColor),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+_openBottomModalSheet(BuildContext context) {
+  return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 150,
+          decoration: BoxDecoration(color: backGroundColor.withOpacity(.8)),
+          child: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      "More Options",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: primaryColor),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Divider(
+                    thickness: 1,
+                    color: secondaryColor,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      "Delete Post",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: primaryColor),
+                    ),
+                  ),
+                  sizeVer(7),
+                  Divider(
+                    thickness: 1,
+                    color: secondaryColor,
+                  ),
+                  sizeVer(7),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, PageConst.updatePostPage);
+                        // Navigator.push(context,MaterialPageRoute(builder: (context) => UpdatePostPage()));
+                      },
+                      child: Text(
+                        "Update Post",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: primaryColor),
+                      ),
+                    ),
+                  ),
+                  sizeVer(7),
+                ],
+              ),
+            ),
+          ),
+        );
+      });
 }

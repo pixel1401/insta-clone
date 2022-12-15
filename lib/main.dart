@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:insta_clone/features/presentation/page/main_screen/main_screen.dart';
-import 'features/presentation/page/credential/sign_up_page.dart';
+import 'package:insta_clone/features/presentation/page/credential/sign_in_page.dart';
+import 'package:insta_clone/on_generate_route.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Instagram Clone",
       darkTheme: ThemeData.dark(),
-      home: MainScreen(),
+      onGenerateRoute: OnGenerateRoute.route ,
+      initialRoute: "/",
+      routes: {
+        "/": (context) {
+          return SignInPage();
+        }
+      },
     );
   }
 }
