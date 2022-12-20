@@ -55,8 +55,9 @@ class UserModel extends UserEntity {
 
   Map<String, dynamic> toJson() => {
         "uid": uid,
-        "email": email,
         "name": name,
+        "email": email,
+        "bio" : bio ,
         "username": username,
         "totalFollowers": totalFollowers,
         "totalFollowing": totalFollowing,
