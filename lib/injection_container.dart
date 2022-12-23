@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source_impl.dart';
-import 'package:insta_clone/features/data/repository/firebase_repository.dart';
+import 'package:insta_clone/features/data/repository/firebase_repository_impl.dart';
 import 'package:insta_clone/features/domain/repository/firebase_repository.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/create_user_usecase.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/get_current_uid_user_usecase.dart';

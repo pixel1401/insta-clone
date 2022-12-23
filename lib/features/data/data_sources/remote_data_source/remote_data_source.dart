@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 
 abstract class FirebaseRemoteDataSource {
@@ -13,4 +16,15 @@ abstract class FirebaseRemoteDataSource {
   Future<String> getCurrentUid();
   Future<void> createUser(UserEntity user);
   Future<void> updateUser(UserEntity user);
+
+    // Cloud Storage
+  Future<String> uploadImageToStorage(
+      File? file, bool isPost, String childName);
+
+  // Post Features
+  Future<void> createPost(PostEntity post);
+  Stream<List<PostEntity>> readPost(PostEntity post);
+  Future<void> updatePost(PostEntity post);
+  Future<void> deletePost(PostEntity post);
+  Future<void> likePost(PostEntity post);
 }

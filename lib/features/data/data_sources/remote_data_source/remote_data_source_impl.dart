@@ -1,10 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
 import 'package:insta_clone/features/data/models/user/user_model.dart';
+import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 
 class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
@@ -143,4 +145,45 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
 
     userCollection.doc(user.uid).update(userInformation);
   }
+
+
+
+
+  @override
+  Future<void> createPost(PostEntity post) {
+    // TODO: implement createPost
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deletePost(PostEntity post) {
+    // TODO: implement deletePost
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> likePost(PostEntity post) {
+    // TODO: implement likePost
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<List<PostEntity>> readPost(PostEntity post) {
+    // TODO: implement readPost
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updatePost(PostEntity post) {
+    // TODO: implement updatePost
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> uploadImageToStorage(File? file, bool isPost, String childName) {
+    // TODO: implement uploadImageToStorage
+    throw UnimplementedError();
+  }
+
+
 }

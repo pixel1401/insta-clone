@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
+import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/domain/repository/firebase_repository.dart';
 
@@ -38,4 +41,33 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<void> updateUser(UserEntity user) async =>
       remoteDataSource.updateUser(user);
+
+  @override
+  Future<String> uploadImageToStorage(
+      File? file, bool isPost, String childName) {
+    // TODO: implement uploadImageToStorage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> createPost(PostEntity post) async =>
+      remoteDataSource.createPost(post);
+
+  @override
+  Future<void> deletePost(PostEntity post) async =>
+      remoteDataSource.deletePost(post);
+
+  @override
+  Future<void> likePost(PostEntity post) async =>
+      remoteDataSource.likePost(post);
+
+  @override
+  Stream<List<PostEntity>> readPost(PostEntity post) {
+    // TODO: implement readPost
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updatePost(PostEntity post) async =>
+      remoteDataSource.updatePost(post);
 }
