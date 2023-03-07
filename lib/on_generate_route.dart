@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:insta_clone/consts.dart';
+import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 
 import 'features/presentation/page/credential/sign_in_page.dart';
 import 'features/presentation/page/credential/sign_up_page.dart';
 import 'features/presentation/page/post/comment/comment_page.dart';
 import 'features/presentation/page/post/update_post_page.dart';
 import 'features/presentation/page/profile/edit_profile_page.dart';
-
 
 class OnGenerateRoute {
   static Route<dynamic>? route(RouteSettings settings) {
@@ -15,7 +15,11 @@ class OnGenerateRoute {
     switch (settings.name) {
       case PageConst.editProfilePage:
         {
-          return routeBuilder(EditProfilePage());
+          if (args is UserEntity) {
+            return routeBuilder(EditProfilePage(userEntity: args));
+          } else {
+            return routeBuilder(NoPageFound());
+          }
         }
       case PageConst.updatePostPage:
         {

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/presentation/cubit/auth/auth_cubit.dart';
@@ -9,6 +12,7 @@ import 'package:insta_clone/features/presentation/page/credential/sign_in_page.d
 import 'package:insta_clone/features/presentation/page/main_screen/main_screen.dart';
 import 'package:insta_clone/features/presentation/widgets/button_container_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/form_container_widget.dart';
+import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -24,6 +28,25 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _bioController = TextEditingController();
 
   bool _isSigningUp = false;
+
+  File? _image;
+
+  Future selectImage() async {
+    try {
+      final pickedFile =
+          await ImagePicker.platform.getImage(source: ImageSource.gallery);
+
+      setState(() {
+        if (pickedFile != null) {
+          _image = File(pickedFile.path);
+        } else {
+          print('not image selected');
+        }
+      });
+    } catch (err) {
+      toast('Some error occured ${err}');
+    }
+  }
 
   @override
   void dispose() {
@@ -89,13 +112,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   height: 60,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(30)),
-                  child: Image.asset("assets/profile_default.png"),
+                  child: profileWidget(image: _image , ),
                 ),
                 Positioned(
                   right: -10,
                   bottom: -15,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: selectImage,
                     icon: Icon(
                       Icons.add_a_photo,
                       color: blueColor,
@@ -207,6 +230,7 @@ class _SignUpPageState extends State<SignUpPage> {
           website: "",
           following: [],
           name: "",
+          imageFile: _image
         ))
         .then((value) => _clear());
   }

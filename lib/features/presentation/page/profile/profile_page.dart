@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_clone/consts.dart';
@@ -5,6 +7,7 @@ import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/presentation/cubit/auth/auth_cubit.dart';
 import 'package:insta_clone/features/presentation/page/credential/sign_in_page.dart';
 import 'package:insta_clone/features/presentation/page/profile/edit_profile_page.dart';
+import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   final UserEntity currentUser;
@@ -30,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
               padding: const EdgeInsets.only(right: 10.0),
               child: InkWell(
                   onTap: () {
-                    _openBottomModalSheet(context);
+                    _openBottomModalSheet(context, widget.currentUser);
                   },
                   child: Icon(
                     Icons.menu,
@@ -51,8 +54,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     Container(
                       width: 80,
                       height: 80,
-                      decoration: BoxDecoration(
-                          color: secondaryColor, shape: BoxShape.circle),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: profileWidget(
+                            imageUrl: widget.currentUser.profileUrl),
+                      ),
                     ),
                     Row(
                       children: [
@@ -141,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-_openBottomModalSheet(BuildContext context) {
+_openBottomModalSheet(BuildContext context, UserEntity currentUser) {
   return showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -178,7 +184,9 @@ _openBottomModalSheet(BuildContext context) {
                     padding: const EdgeInsets.only(left: 10.0),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, PageConst.editProfilePage);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, PageConst.editProfilePage,
+                            arguments: currentUser);
                         // Navigator.push(context,MaterialPageRoute(builder: (context) => EditProfilePage()));
                       },
                       child: Text(
@@ -200,6 +208,7 @@ _openBottomModalSheet(BuildContext context) {
                     padding: const EdgeInsets.only(left: 10.0),
                     child: GestureDetector(
                       onTap: () {
+                        
                         Navigator.push(
                           context,
                           MaterialPageRoute<void>(

@@ -3,18 +3,55 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
 import 'package:insta_clone/features/data/models/user/user_model.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
   final FirebaseFirestore firebaseFirestore;
   final FirebaseAuth firebaseAuth;
+  final FirebaseStorage firebaseStorage;
 
   FirebaseRemoteDataSourceImpl(
-      {required this.firebaseAuth, required this.firebaseFirestore});
+      {required this.firebaseAuth,
+      required this.firebaseFirestore,
+      required this.firebaseStorage});
+
+  @override
+  Future<void> createUserWithImage(UserEntity user, String profileUrl) async {
+    final userCollection = firebaseFirestore.collection(FirebaseConst.users);
+
+    final uid = await getCurrentUid();
+
+    userCollection.doc(uid).get().then((userDoc) {
+      final newUser = UserModel(
+              uid: uid,
+              name: user.name,
+              email: user.email,
+              bio: user.bio,
+              following: user.following,
+              website: user.website,
+              profileUrl: profileUrl,
+              username: user.username,
+              totalFollowers: user.totalFollowers,
+              followers: user.followers,
+              totalFollowing: user.totalFollowing,
+              totalPosts: user.totalPosts)
+          .toJson();
+
+      if (!userDoc.exists) {
+        userCollection.doc(uid).set(newUser);
+      } else {
+        userCollection.doc(uid).update(newUser);
+      }
+    }).catchError((error) {
+      toast("Some error occur");
+    });
+  }
 
   @override
   Future<void> createUser(UserEntity user) async {
@@ -102,7 +139,14 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
               email: user.email!, password: user.password!)
           .then((value) async {
         if (value.user?.uid != null) {
-          await createUser(user);
+          if (user.imageFile != null) {
+            uploadImageToStorage(user.imageFile, false, 'profileImages')
+                .then((profileUrl) {
+              createUserWithImage(user, profileUrl);
+            });
+          } else {
+            await createUserWithImage(user, '');
+          }
         }
       });
       return;
@@ -146,9 +190,6 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     userCollection.doc(user.uid).update(userInformation);
   }
 
-
-
-
   @override
   Future<void> createPost(PostEntity post) {
     // TODO: implement createPost
@@ -180,10 +221,22 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
   }
 
   @override
-  Future<String> uploadImageToStorage(File? file, bool isPost, String childName) {
-    // TODO: implement uploadImageToStorage
-    throw UnimplementedError();
+  Future<String> uploadImageToStorage(
+      File? file, bool isPost, String childName) async {
+    Reference ref = firebaseStorage
+        .ref()
+        .child(childName)
+        .child(firebaseAuth.currentUser!.uid);
+
+    if (isPost) {
+      String id = Uuid().v1();
+      ref = ref.child(id);
+    }
+
+    final uploadTask = ref.putFile(file!);
+    final imageUrl =
+        (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
+
+    return await imageUrl;
   }
-
-
 }
