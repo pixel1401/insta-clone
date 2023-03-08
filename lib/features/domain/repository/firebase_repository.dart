@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 
@@ -19,7 +20,7 @@ abstract class FirebaseRepository {
 
   // Cloud Storage
   Future<String> uploadImageToStorage(
-      File? file, bool isPost, String childName);
+      {File? file, required bool isPost, required String childName , Uint8List? imageWeb});
 
   // Post Features
 

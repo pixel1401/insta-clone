@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
@@ -19,7 +20,7 @@ abstract class FirebaseRemoteDataSource {
 
     // Cloud Storage
   Future<String> uploadImageToStorage(
-      File? file, bool isPost, String childName);
+       {File? file, required bool isPost, required String childName , Uint8List? imageWeb});
 
   // Post Features
   Future<void> createPost(PostEntity post);

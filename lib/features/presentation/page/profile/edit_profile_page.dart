@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +12,7 @@ import 'package:insta_clone/features/presentation/cubit/user/user_cubit.dart';
 import 'package:insta_clone/features/presentation/page/profile/widget/profile_form_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
 import 'package:insta_clone/injection_container.dart' as di;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class EditProfilePage extends StatefulWidget {
   final UserEntity userEntity;
@@ -30,18 +33,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   File? _image;
 
+  Uint8List? _imageWeb;
+
   Future selectImage() async {
     try {
-      final pickedFile =
-          await ImagePicker.platform.getImage(source: ImageSource.gallery);
+      if (kIsWeb) {
+        FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-      setState(() {
-        if (pickedFile != null) {
-          _image = File(pickedFile.path);
+        if (result != null) {
+          Uint8List? file = result.files.single.bytes;
+          setState(() {
+            _imageWeb = file;
+          });
         } else {
-          print('not image selected');
+          toast('Some error pick file');
+          return;
         }
-      });
+      } else {
+        final pickedFile =
+            await ImagePicker.platform.getImage(source: ImageSource.gallery);
+
+        setState(() {
+          if (pickedFile != null) {
+            _image = File(pickedFile.path);
+          } else {
+            print('not image selected');
+          }
+        });
+      }
     } catch (err) {
       toast('Some error occured ${err}');
     }
@@ -96,7 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(60),
                     child:
-                        profileWidget(imageUrl: widget.userEntity.profileUrl),
+                        profileWidget(imageUrl: widget.userEntity.profileUrl , image: _image , imageWeb: _imageWeb),
                   ),
                 ),
               ),
@@ -155,19 +174,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   _uploadUserProfileDate() {
-    if (_image == null) {
-      return _updateUserProfile('');
+    if (_image != null || _imageWeb != null  ) {
+      setState(() {
+        _isUploading = true;
+      });
+      di
+          .sl<UploadImageToStorageUseCase>()
+          .call( file : _image, isPost:false, childName :  FirebaseConst.profileImage , imageWeb: _imageWeb)
+          .then((profileUrl) => {_updateUserProfile(profileUrl)});
     } else {
-      di.sl<UploadImageToStorageUseCase>().call(_image!, false, FirebaseConst.profileImage).then((profileUrl) => {
-        _updateUserProfile(profileUrl)
-      } );
+      return _updateUserProfile('');
     }
   }
 
   _updateUserProfile(String? imageUrl) {
-    setState(() {
+    if(_isUploading == false) {
+      setState(() {
       _isUploading = true;
     });
+    }
+    
     BlocProvider.of<UserCubit>(context)
         .updateUser(
             user: UserEntity(

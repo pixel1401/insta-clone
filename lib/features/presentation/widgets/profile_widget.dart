@@ -1,16 +1,11 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-Widget profileWidget({String? imageUrl, File? image}) {
-  if (image == null) {
-    if (imageUrl == null || imageUrl == "")
-      return Image.asset(
-        'assets/profile_default.png',
-        fit: BoxFit.cover,
-      );
-    else
+Widget profileWidget({String? imageUrl, File? image , Uint8List? imageWeb}) {
+  if (imageUrl != null && imageUrl != "" && (image == null || imageWeb == null)) {
       return CachedNetworkImage(
         imageUrl: "$imageUrl",
         fit: BoxFit.cover,
@@ -22,10 +17,17 @@ Widget profileWidget({String? imageUrl, File? image}) {
           fit: BoxFit.cover,
         ),
       );
-  } else {
+  } else if(image != null)  {
     return Image.file(
       image,
       fit: BoxFit.cover,
     );
+  } else if (imageWeb != null) {
+    return Image.memory(imageWeb);
+  }else {
+    return Image.asset(
+        'assets/profile_default.png',
+        fit: BoxFit.cover,
+      );
   }
 }

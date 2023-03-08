@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +14,7 @@ import 'package:insta_clone/features/presentation/page/main_screen/main_screen.d
 import 'package:insta_clone/features/presentation/widgets/button_container_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/form_container_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -30,19 +32,35 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _isSigningUp = false;
 
   File? _image;
+  Uint8List? _imageWeb;
+
 
   Future selectImage() async {
     try {
-      final pickedFile =
-          await ImagePicker.platform.getImage(source: ImageSource.gallery);
+      if (kIsWeb) {
+        FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-      setState(() {
-        if (pickedFile != null) {
-          _image = File(pickedFile.path);
+        if (result != null) {
+          Uint8List? file = result.files.single.bytes;
+          setState(() {
+            _imageWeb = file;
+          });
         } else {
-          print('not image selected');
+          toast('Some error pick file');
+          return;
         }
-      });
+      } else {
+        final pickedFile =
+            await ImagePicker.platform.getImage(source: ImageSource.gallery);
+
+        setState(() {
+          if (pickedFile != null) {
+            _image = File(pickedFile.path);
+          } else {
+            print('not image selected');
+          }
+        });
+      }
     } catch (err) {
       toast('Some error occured ${err}');
     }
@@ -112,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   height: 60,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(30)),
-                  child: profileWidget(image: _image , ),
+                  child: profileWidget(image: _image , imageWeb: _imageWeb),
                 ),
                 Positioned(
                   right: -10,
@@ -230,7 +248,8 @@ class _SignUpPageState extends State<SignUpPage> {
           website: "",
           following: [],
           name: "",
-          imageFile: _image
+          imageFile: _image,
+          imageWeb: _imageWeb
         ))
         .then((value) => _clear());
   }

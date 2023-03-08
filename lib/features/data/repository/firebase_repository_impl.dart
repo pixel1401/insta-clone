@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
@@ -44,9 +45,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<String> uploadImageToStorage(
-      File? file, bool isPost, String childName) {
+       {File? file, required bool isPost, required String childName , Uint8List? imageWeb}) {
     // TODO: implement uploadImageToStorage
-    throw UnimplementedError();
+    return remoteDataSource.uploadImageToStorage(file : file, isPost : isPost, childName : childName , imageWeb: imageWeb);  
   }
 
   @override
