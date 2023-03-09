@@ -31,26 +31,26 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
 
     final uid = await getCurrentUid();
 
-    userCollection.doc(uid).get().then((userDoc) {
+    await userCollection.doc(uid).get().then((userDoc) async {
       final newUser = UserModel(
               uid: uid,
-              name: user.name,
-              email: user.email,
-              bio: user.bio,
-              following: user.following,
-              website: user.website,
-              profileUrl: profileUrl,
-              username: user.username,
-              totalFollowers: user.totalFollowers,
-              followers: user.followers,
-              totalFollowing: user.totalFollowing,
-              totalPosts: user.totalPosts)
+              name: user.name ?? '',
+              email: user.email ?? '',
+              bio: user.bio ?? '',
+              following: user.following ?? [],
+              website: user.website ?? '',
+              profileUrl: profileUrl ,
+              username: user.username ?? '',
+              totalFollowers: user.totalFollowers ?? 0,
+              followers: user.followers ?? [],
+              totalFollowing: user.totalFollowing ?? 0,
+              totalPosts: user.totalPosts ?? 0)
           .toJson();
 
       if (!userDoc.exists) {
-        userCollection.doc(uid).set(newUser );
+        await userCollection.doc(uid).set(newUser );
       } else {
-        userCollection.doc(uid).update(newUser);
+        await userCollection.doc(uid).update(newUser);
       }
     }).catchError((error) {
       toast("Some error occur");
@@ -71,17 +71,17 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     userCollection.doc(uid).get().then((userDoc) {
       final newUser = UserModel(
               uid: uid,
-              name: user.name,
-              email: user.email,
-              bio: user.bio,
-              following: user.following,
-              website: user.website,
-              profileUrl: user.profileUrl,
-              username: user.username,
-              totalFollowers: user.totalFollowers,
-              followers: user.followers,
-              totalFollowing: user.totalFollowing,
-              totalPosts: user.totalPosts)
+              name: user.name ?? '',
+              email: user.email ?? '',
+              bio: user.bio ?? '',
+              following: user.following ?? [],
+              website: user.website ?? '',
+              profileUrl: user.profileUrl ?? '',
+              username: user.username ?? '',
+              totalFollowers: user.totalFollowers ?? 0,
+              followers: user.followers ?? [],
+              totalFollowing: user.totalFollowing ?? 0,
+              totalPosts: user.totalPosts ?? 0)
           .toJson();
 
       if (!userDoc.exists) {
@@ -148,7 +148,7 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
               email: user.email ?? '', password: user.password ?? '')
           .then((value) async {
         if (value.user?.uid != null) {
-          if (user.imageFile != null) {
+          if (user.imageFile != null || user.imageWeb != null) {
             uploadImageToStorage(
                     file: user.imageFile,
                     isPost: false,

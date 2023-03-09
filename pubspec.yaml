@@ -34,6 +34,7 @@ dependencies:
 
   #state management
   flutter_bloc: ^8.0.1
+  permission_handler: ^9.2.0
   equatable: ^2.0.3
   #Firebase
   cloud_firestore: ^4.2.0
