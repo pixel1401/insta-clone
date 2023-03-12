@@ -20,6 +20,7 @@ class HomePage extends StatelessWidget {
           height: 32,
         ),
         actions: [
+          
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: Icon(

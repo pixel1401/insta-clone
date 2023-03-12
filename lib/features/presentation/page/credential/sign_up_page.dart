@@ -34,7 +34,6 @@ class _SignUpPageState extends State<SignUpPage> {
   File? _image;
   Uint8List? _imageWeb;
 
-
   Future selectImage() async {
     try {
       if (kIsWeb) {
@@ -128,9 +127,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 Container(
                   width: 60,
                   height: 60,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(30)),
-                  child: profileWidget(image: _image , imageWeb: _imageWeb),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: profileWidget(image: _image, imageWeb: _imageWeb),
+                  ),
                 ),
                 Positioned(
                   right: -10,
@@ -236,21 +236,20 @@ class _SignUpPageState extends State<SignUpPage> {
     BlocProvider.of<CredentialCubit>(context)
         .signUpUser(
             user: UserEntity(
-          email: _emailController.text,
-          password: _passwordController.text,
-          bio: _bioController.text,
-          username: _usernameController.text,
-          totalPosts: 0,
-          totalFollowing: 0,
-          followers: [],
-          totalFollowers: 0,
-          profileUrl: "",
-          website: "",
-          following: [],
-          name: "",
-          imageFile: _image,
-          imageWeb: _imageWeb
-        ))
+                email: _emailController.text,
+                password: _passwordController.text,
+                bio: _bioController.text,
+                username: _usernameController.text,
+                totalPosts: 0,
+                totalFollowing: 0,
+                followers: [],
+                totalFollowers: 0,
+                profileUrl: "",
+                website: "",
+                following: [],
+                name: "",
+                imageFile: _image,
+                imageWeb: _imageWeb))
         .then((value) => _clear());
   }
 
