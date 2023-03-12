@@ -1,31 +1,33 @@
-import 'dart:developer';
+
+
+import 'dart:typed_data';
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
-import 'package:insta_clone/features/data/models/posts/posts_model.dart';
 import 'package:insta_clone/features/data/models/user/user_model.dart';
-import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
-import 'package:uuid/uuid.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 
-class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
+class  UsersRemoteDataSourceImpl   {
+
   final FirebaseFirestore firebaseFirestore;
   final FirebaseAuth firebaseAuth;
   final FirebaseStorage firebaseStorage;
 
-  FirebaseRemoteDataSourceImpl(
+
+  UsersRemoteDataSourceImpl(
       {required this.firebaseAuth,
       required this.firebaseFirestore,
       required this.firebaseStorage});
 
-  @override
-  Future<void> createUserWithImage(UserEntity user, String profileUrl) async {
+  
+
+  Future<void> createUserWithImage( UserEntity user,  String profileUrl ) async {
     try {
       final userCollection = firebaseFirestore.collection(FirebaseConst.users);
 
@@ -133,13 +135,16 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     }
   }
 
-  @override
   Future<void> signOut() async {
     await firebaseAuth.signOut();
   }
 
-  @override
-  Future<void> signUpUser(UserEntity user) async {
+  Future<void> signUpUser(UserEntity user , Future<String> Function({
+  File? file,
+  required bool isPost,
+  required String childName,
+  Uint8List? imageWeb,
+}) uploadImageToStorage) async {
     try {
       await firebaseAuth
           .createUserWithEmailAndPassword(
@@ -151,7 +156,9 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
                     file: user.imageFile,
                     isPost: false,
                     childName: FirebaseConst.profileImage,
-                    imageWeb: user.imageWeb)
+                    imageWeb: user.imageWeb
+                    
+                    )
                 .then((profileUrl) {
               createUserWithImage(user, profileUrl);
             });
@@ -200,126 +207,5 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
 
     userCollection.doc(user.uid).update(userInformation);
   }
-
-  // !POSTS
-  @override
-  Future<void> createPost(PostEntity post) async {
-    final postCollection = firebaseFirestore.collection(FirebaseConst.posts);
-
-    final currentUid = await getCurrentUid();
-
-    final postModel = PostsModel(
-            postId: post.postId,
-            creatorUid: post.creatorUid,
-            username: post.username,
-            description: post.description,
-            postImageUrl: post.postImageUrl,
-            userProfileUrl: post.userProfileUrl,
-            totalLikes: 0,
-            likes: [],
-            totalComments: 0,
-            createAt: post.createAt)
-        .toJson();
-
-    postCollection.doc(currentUid).get().then((value) {
-      if (!value.exists) {
-        postCollection.doc(currentUid).set(postModel);
-      } else {
-        postCollection.doc(currentUid).update(postModel);
-      }
-    }).catchError((e) {
-      print('Error craete post ${e} ');
-    });
-  }
-
-  @override
-  Future<void> deletePost(PostEntity post) async {
-    final postsCollection = firebaseFirestore.collection(FirebaseConst.posts);
-
-    try {
-      postsCollection.doc(post.postId).delete();
-    } catch (e) {
-      print('DElete error post  ${e}');
-    }
-  }
-
-  @override
-  Future<void> likePost(PostEntity post) async {
-    final postsCollection = firebaseFirestore.collection(FirebaseConst.posts);
-
-    final currentUid = await getCurrentUid();
-
-    final currentPost = await postsCollection.doc(post.postId).get();
-
-    if (currentPost.exists) {
-      List likes = currentPost.get("likes");
-      final totalLikes = currentPost.get("totalLikes");
-      if (likes.contains(currentUid)) {
-        postsCollection.doc(post.postId).update({
-          "likes": FieldValue.arrayRemove([currentUid]),
-          "totalLikes": totalLikes - 1
-        }).catchError(() => print('Remove Likes post Eror'));
-      } else {
-        postsCollection.doc(post.postId).update({
-          "likes": FieldValue.arrayUnion([currentUid]),
-          "totalLikes": totalLikes + 1
-        }).catchError((e) => print('Add likes post Erorr'));
-      }
-    }
-  }
-
-  @override
-  Stream<List<PostEntity>> readPost(PostEntity post) {
-    final postsCollection = firebaseFirestore.collection(FirebaseConst.posts);
-    return postsCollection.snapshots().map((querySnapshot) =>
-        querySnapshot.docs.map((e) => PostsModel.fromSnapshot(e)).toList());
-  }
-
-  @override
-  Future<void> updatePost(PostEntity post) async {
-    final postsCollection = firebaseFirestore.collection(FirebaseConst.posts);
-
-    Map<String, dynamic> postInfo = Map();
-
-    if (post.description != '' && post.description != null)
-      postInfo['description'] = post.description;
-
-    if (post.postImageUrl != '' && post.postImageUrl != null)
-      postInfo['postImageUrl'] = post.postImageUrl;
-
-    postsCollection.doc(post.postId).update(postInfo).catchError((e) => print('Update Post error ${e}'));
-  }
-
-  @override
-  Future<String> uploadImageToStorage(
-      {File? file,
-      required bool isPost,
-      required String childName,
-      Uint8List? imageWeb}) async {
-    Reference ref = firebaseStorage
-        .ref()
-        .child(childName)
-        .child(firebaseAuth.currentUser!.uid);
-
-    if (isPost) {
-      String id = Uuid().v1();
-      ref = ref.child(id);
-    }
-
-    final UploadTask uploadTask;
-
-    if (kIsWeb) {
-      uploadTask = ref.putData(
-        imageWeb!,
-        SettableMetadata(contentType: 'image/jpeg'),
-      );
-    } else {
-      uploadTask = ref.putFile(file!);
-    }
-
-    final imageUrl =
-        (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
-
-    return await imageUrl;
-  }
+  
 }

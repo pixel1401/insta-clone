@@ -45,9 +45,13 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<String> uploadImageToStorage(
-       {File? file, required bool isPost, required String childName , Uint8List? imageWeb}) {
+      {File? file,
+      required bool isPost,
+      required String childName,
+      Uint8List? imageWeb}) {
     // TODO: implement uploadImageToStorage
-    return remoteDataSource.uploadImageToStorage(file : file, isPost : isPost, childName : childName , imageWeb: imageWeb);  
+    return remoteDataSource.uploadImageToStorage(
+        file: file, isPost: isPost, childName: childName, imageWeb: imageWeb);
   }
 
   @override
@@ -64,8 +68,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Stream<List<PostEntity>> readPost(PostEntity post) {
-    // TODO: implement readPost
-    throw UnimplementedError();
+    return remoteDataSource.readPost(post);
   }
 
   @override
