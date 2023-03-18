@@ -20,6 +20,7 @@ Widget sizeHor(double width) {
 class PageConst {
   static const String editProfilePage = "editProfilePage";
   static const String updatePostPage = "updatePostPage";
+  static const String uploadPostPage = "uploadPostPage";
   static const String commentPage = "commentPage";
   static const String signInPage = "signInPage";
   static const String signUpPage = "signUpPage";
@@ -33,6 +34,7 @@ class FirebaseConst {
 
   // STORAGE NAME FOLDER
   static const String profileImage = 'profileImages';
+  static const String postImage = 'postImages';
 }
 
 void toast(String message) {

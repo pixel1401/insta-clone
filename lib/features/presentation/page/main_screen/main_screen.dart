@@ -82,7 +82,9 @@ class _MainScreenState extends State<MainScreen> {
             children: [
               HomePage(),
               SearchPage(),
-              UploadPostPage(),
+              UploadPostPage(
+                user: currentUser,
+              ),
               ActivityPage(),
               ProfilePage(
                 currentUser: currentUser,

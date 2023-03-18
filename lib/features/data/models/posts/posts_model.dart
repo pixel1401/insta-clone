@@ -46,7 +46,7 @@ class PostsModel extends PostEntity {
         postImageUrl: snapshot['postImageUrl'],
         userProfileUrl: snapshot['userProfileUrl'],
         totalLikes: snapshot['totalLikes'],
-        likes: snapshot['likes'],
+        likes: List.from(snap.get("likes")),
         totalComments: snapshot['totalComments'],
         createAt: snapshot['createAt']);
   }

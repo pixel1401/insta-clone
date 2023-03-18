@@ -221,11 +221,11 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
             createAt: post.createAt)
         .toJson();
 
-    postCollection.doc(currentUid).get().then((value) {
+    postCollection.doc(post.postId).get().then((value) {
       if (!value.exists) {
-        postCollection.doc(currentUid).set(postModel);
+        postCollection.doc(post.postId).set(postModel);
       } else {
-        postCollection.doc(currentUid).update(postModel);
+        postCollection.doc(post.postId).update(postModel);
       }
     }).catchError((e) {
       print('Error craete post ${e} ');
@@ -287,7 +287,14 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     if (post.postImageUrl != '' && post.postImageUrl != null)
       postInfo['postImageUrl'] = post.postImageUrl;
 
-    postsCollection.doc(post.postId).update(postInfo).catchError((e) => print('Update Post error ${e}'));
+    postsCollection.doc(post.postId).update(postInfo).catchError((e) {
+      print('Update Post error ${e}');
+
+      toast('Post dont update');
+
+    } 
+    
+    );
   }
 
   @override

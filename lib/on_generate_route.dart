@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insta_clone/consts.dart';
+import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:insta_clone/features/presentation/page/post/upload_post_page.dart';
 
 import 'features/presentation/page/credential/sign_in_page.dart';
 import 'features/presentation/page/credential/sign_up_page.dart';
@@ -10,7 +12,7 @@ import 'features/presentation/page/profile/edit_profile_page.dart';
 
 class OnGenerateRoute {
   static Route<dynamic>? route(RouteSettings settings) {
-    final args = settings.arguments;
+    final args = settings.arguments ;
 
     switch (settings.name) {
       case PageConst.editProfilePage:
@@ -25,6 +27,15 @@ class OnGenerateRoute {
         {
           return routeBuilder(UpdatePostPage());
         }
+       case PageConst.uploadPostPage:
+        {
+          final arguments = args as Map;
+           if (args['post'] is PostEntity) {
+            return routeBuilder(UploadPostPage(user: args['user'] ?? null , postUpdate  : args['post'] ?? null ));
+          } else {
+            return routeBuilder(NoPageFound());
+          }
+        } 
       case PageConst.commentPage:
         {
           return routeBuilder(CommentPage());
