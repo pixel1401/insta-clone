@@ -9,6 +9,7 @@ import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/get_
 import 'package:insta_clone/features/presentation/cubit/cubit/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/get_single_user/get_single_user_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/user_cubit.dart';
+import 'package:insta_clone/features/presentation/page/post/widgets/like_animation_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
 import 'package:insta_clone/injection_container.dart' as di;
 import 'package:intl/intl.dart';
@@ -77,11 +78,38 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
               ],
             ),
             sizeVer(10),
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.30,
-              color: secondaryColor,
-              child:profileWidget(imageUrl: widget.post.postImageUrl),
+            GestureDetector(
+              onDoubleTap: () {
+                _likePost();
+                setState(() {
+                  _isLikeAnimating = true;
+                });
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: 
+                  [
+                    Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.30,
+                    color: secondaryColor,
+                    child:profileWidget(imageUrl: widget.post.postImageUrl),
+                  ),
+                  AnimatedOpacity(
+                      duration: Duration(milliseconds: 200),
+                      opacity: _isLikeAnimating? 1 : 0,
+                      child: LikeAnimationWidget(
+                       duration: Duration(milliseconds: 200),
+                      isLikeAnimating: _isLikeAnimating,
+                      onLikeFinish: () {
+                         setState(() {
+                           _isLikeAnimating = false;
+                         });
+                      },
+                      child: Icon(Icons.favorite, size: 100, color: Colors.red,)),
+                    )
+                ],
+              ),
             ),
             sizeVer(10),
             Row(
@@ -89,10 +117,7 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.favorite,
-                      color: primaryColor,
-                    ),
+                    GestureDetector(onTap: _likePost,child: Icon(widget.post.likes!.contains(_currentUid)?Icons.favorite : Icons.favorite_outline, color: widget.post.likes!.contains(_currentUid)? Colors.red : primaryColor,)),
                     sizeHor(10),
                     Icon(
                       Icons.message,
