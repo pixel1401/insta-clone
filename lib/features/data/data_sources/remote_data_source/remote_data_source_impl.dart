@@ -9,6 +9,7 @@ import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source.dart';
 import 'package:insta_clone/features/data/models/posts/posts_model.dart';
 import 'package:insta_clone/features/data/models/user/user_model.dart';
+import 'package:insta_clone/features/domain/entities/comment/comment_entity.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:uuid/uuid.dart';
@@ -328,5 +329,38 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
         (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
 
     return await imageUrl;
+  }
+
+
+
+  // COMMENT
+  @override
+  Future<void> createComment(CommentEntity comment) {
+    // TODO: implement createComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteComment(CommentEntity comment) {
+    // TODO: implement deleteComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> likeComment(CommentEntity comment) {
+    // TODO: implement likeComment
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<List<CommentEntity>> readComments(String postId) {
+    // TODO: implement readComments
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateComment(CommentEntity comment) {
+    // TODO: implement updateComment
+    throw UnimplementedError();
   }
 }
