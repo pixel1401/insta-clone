@@ -11,7 +11,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/storage/upload_image_usecase_to_storage.dart';
-import 'package:insta_clone/features/presentation/cubit/cubit/post_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/user_cubit.dart';
 import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
 import 'package:insta_clone/injection_container.dart' as di;

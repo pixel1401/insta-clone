@@ -3,10 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_clone/consts.dart';
+import 'package:insta_clone/features/domain/entities/app_entity.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/get_current_uid_user_usecase.dart';
-import 'package:insta_clone/features/presentation/cubit/cubit/post_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/get_single_user/get_single_user_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/user_cubit.dart';
 import 'package:insta_clone/features/presentation/page/post/widgets/like_animation_widget.dart';
@@ -119,14 +120,24 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
                   children: [
                     GestureDetector(onTap: _likePost,child: Icon(widget.post.likes!.contains(_currentUid)?Icons.favorite : Icons.favorite_outline, color: widget.post.likes!.contains(_currentUid)? Colors.red : primaryColor,)),
                     sizeHor(10),
-                    Icon(
-                      Icons.message,
-                      color: primaryColor,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, PageConst.commentPage , arguments: AppEntity(uid: _currentUid, postId: widget.post.postId , postEntity: widget.post ));
+                      },
+                      child: Icon(
+                        Icons.message,
+                        color: primaryColor,
+                      ),
                     ),
                     sizeHor(10),
-                    Icon(
-                      Icons.send,
-                      color: primaryColor,
+                    GestureDetector(
+                      onTap: () {
+                        
+                      },
+                      child: Icon(
+                        Icons.send,
+                        color: primaryColor,
+                      ),
                     ),
                   ],
                 ),
@@ -156,7 +167,7 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
             sizeVer(10),
             GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, PageConst.commentPage);
+                  Navigator.pushNamed(context, PageConst.commentPage , arguments: AppEntity(uid: _currentUid, postId: widget.post.postId , postEntity: widget.post ));
                   // Navigator.push(context,MaterialPageRoute(builder: (context) => CommentPage()));
                 },
                 child: Text(

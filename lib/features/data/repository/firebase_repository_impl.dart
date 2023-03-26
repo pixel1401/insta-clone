@@ -81,31 +81,27 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   // COMMENT
   @override
   Future<void> createComment(CommentEntity comment) {
-    // TODO: implement createComment
-    throw UnimplementedError();
+    return remoteDataSource.createComment(comment);
   }
 
   @override
   Future<void> deleteComment(CommentEntity comment) {
     // TODO: implement deleteComment
-    throw UnimplementedError();
+    return remoteDataSource.deleteComment(comment);
   }
 
   @override
   Future<void> likeComment(CommentEntity comment) {
-    // TODO: implement likeComment
-    throw UnimplementedError();
+    return remoteDataSource.likeComment(comment);
   }
 
   @override
   Stream<List<CommentEntity>> readComments(String postId) {
-    // TODO: implement readComments
-    throw UnimplementedError();
+   return remoteDataSource.readComments(postId);
   }
 
   @override
   Future<void> updateComment(CommentEntity comment) {
-    // TODO: implement updateComment
-    throw UnimplementedError();
+    return remoteDataSource.updateComment(comment);
   }
 }

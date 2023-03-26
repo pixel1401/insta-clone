@@ -6,6 +6,11 @@ import 'package:insta_clone/features/data/data_sources/remote_data_source/remote
 import 'package:insta_clone/features/data/data_sources/remote_data_source/remote_data_source_impl.dart';
 import 'package:insta_clone/features/data/repository/firebase_repository_impl.dart';
 import 'package:insta_clone/features/domain/repository/firebase_repository.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/comment/create_comment_usecase.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/comment/dalete_comment_usecase.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/comment/like_comment_usecase.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/comment/read_comment_usecase.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/comment/update_comment_usecase.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/create_post_usecases.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/delete_post_usecases.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/like_post_usecases.dart';
@@ -21,7 +26,8 @@ import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/sign
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/sign_out_usecase.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/sign_up_user_usecase.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/update_user_usecase.dart';
-import 'package:insta_clone/features/presentation/cubit/cubit/post_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/comment/comment_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/get_single_user/get_single_user_cubit.dart';
 
 import 'features/presentation/cubit/auth/auth_cubit.dart';
@@ -61,6 +67,14 @@ Future<void> init() async {
       deletePostsUseCase: sl.call(),
       createPostsUseCase: sl.call(),
       likePostsUseCase: sl.call()));
+  
+  sl.registerFactory(() => CommentCubit(
+      readCommentUseCase: sl.call(),
+      updateCommentUseCase: sl.call(),
+      deleteCommentUseCase: sl.call(),
+      createCommentUseCase: sl.call(),
+      likeCommentUseCase: sl.call()));
+
 
 
   // Use Cases
@@ -80,6 +94,12 @@ Future<void> init() async {
   sl.registerLazySingleton( () => DeletePostsUseCase(repository: sl.call()));
   sl.registerLazySingleton( () => UpdatePostsUseCase(repository: sl.call()));
   sl.registerLazySingleton( () => LikePostsUseCase(repository: sl.call()));
+
+  sl.registerLazySingleton( () => ReadCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton( () => DeleteCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton( () => UpdateCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton( () => CreateCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton( () => LikeCommentUseCase(repository: sl.call()));
 
 
   // COULD STORAGE

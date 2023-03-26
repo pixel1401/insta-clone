@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
-import 'package:insta_clone/features/presentation/cubit/cubit/post_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/page/home/widgets/single_post_card_widget.dart';
 import 'package:insta_clone/features/presentation/page/post/comment/comment_page.dart';
 import 'package:insta_clone/features/presentation/page/post/update_post_page.dart';
