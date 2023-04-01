@@ -16,6 +16,11 @@ import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/del
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/like_post_usecases.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/read_post_usecases.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/posts/update_post_usecases.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/replay/create_replay_usecases.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/replay/delete_replay_usecases.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/replay/like_replay_usecases.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/replay/read_replay_usecases.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/replay/update_replay_usecases.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/storage/upload_image_usecase_to_storage.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/create_user_usecase.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/get_current_uid_user_usecase.dart';
@@ -28,6 +33,7 @@ import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/sign
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/update_user_usecase.dart';
 import 'package:insta_clone/features/presentation/cubit/comment/comment_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/replay/replay_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/get_single_user/get_single_user_cubit.dart';
 
 import 'features/presentation/cubit/auth/auth_cubit.dart';
@@ -67,7 +73,7 @@ Future<void> init() async {
       deletePostsUseCase: sl.call(),
       createPostsUseCase: sl.call(),
       likePostsUseCase: sl.call()));
-  
+
   sl.registerFactory(() => CommentCubit(
       readCommentUseCase: sl.call(),
       updateCommentUseCase: sl.call(),
@@ -75,6 +81,12 @@ Future<void> init() async {
       createCommentUseCase: sl.call(),
       likeCommentUseCase: sl.call()));
 
+  sl.registerFactory(() => ReplayCubit(
+      createReplayUseCase: sl.call(),
+      updateReplayUseCase: sl.call(),
+      readReplaysUseCase: sl.call(),
+      likeReplayUseCase: sl.call(),
+      deleteReplayUseCase: sl.call()));
 
 
   // Use Cases
@@ -89,28 +101,32 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateUserUseCase(repository: sl.call()));
   sl.registerLazySingleton(() => GetSingleUserUseCase(repository: sl.call()));
 
-  sl.registerLazySingleton( () => ReadPostsUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => CreatePostsUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => DeletePostsUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => UpdatePostsUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => LikePostsUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => ReadPostsUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => CreatePostsUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => DeletePostsUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => UpdatePostsUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => LikePostsUseCase(repository: sl.call()));
 
-  sl.registerLazySingleton( () => ReadCommentUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => DeleteCommentUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => UpdateCommentUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => CreateCommentUseCase(repository: sl.call()));
-  sl.registerLazySingleton( () => LikeCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => ReadCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => DeleteCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => UpdateCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => CreateCommentUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => LikeCommentUseCase(repository: sl.call()));
+
+  sl.registerLazySingleton(() => ReadReplaysUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => DeleteReplayUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => UpdateReplayUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => CreateReplayUseCase(repository: sl.call()));
+  sl.registerLazySingleton(() => LikeReplayUseCase(repository: sl.call()));
 
 
   // COULD STORAGE
   sl.registerLazySingleton(
       () => UploadImageToStorageUseCase(repository: sl.call()));
 
-
   // Repository
   sl.registerLazySingleton<FirebaseRepository>(
       () => FirebaseRepositoryImpl(remoteDataSource: sl.call()));
-
 
   // Remote Data Source
   sl.registerLazySingleton<FirebaseRemoteDataSource>(() =>
@@ -118,8 +134,6 @@ Future<void> init() async {
           firebaseFirestore: sl.call(),
           firebaseAuth: sl.call(),
           firebaseStorage: sl.call()));
-
-
 
   // Externals
   final firebaseFirestore = FirebaseFirestore.instance;

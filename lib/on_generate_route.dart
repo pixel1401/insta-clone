@@ -3,6 +3,8 @@ import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/domain/entities/app_entity.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:insta_clone/features/domain/replay/replay_entity.dart';
+import 'package:insta_clone/features/presentation/page/post/comment/edit_replay_page.dart';
 import 'package:insta_clone/features/presentation/page/post/upload_post_page.dart';
 
 import 'features/presentation/page/credential/sign_in_page.dart';
@@ -46,6 +48,14 @@ class OnGenerateRoute {
             return routeBuilder(NoPageFound());
           }
         }
+        case PageConst.updateReplayPage: {
+        if (args is ReplayEntity) {
+          return routeBuilder(EditReplayPage(replay: args,));
+
+        } else {
+          return routeBuilder(NoPageFound());
+        }
+      }
       case PageConst.signInPage:
         {
           return routeBuilder(SignInPage());

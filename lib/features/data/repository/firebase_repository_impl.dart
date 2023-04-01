@@ -5,6 +5,7 @@ import 'package:insta_clone/features/data/data_sources/remote_data_source/remote
 import 'package:insta_clone/features/domain/entities/comment/comment_entity.dart';
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:insta_clone/features/domain/replay/replay_entity.dart';
 import 'package:insta_clone/features/domain/repository/firebase_repository.dart';
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -104,4 +105,23 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<void> updateComment(CommentEntity comment) {
     return remoteDataSource.updateComment(comment);
   }
+
+
+
+  // REPLAY
+  @override
+  Future<void> createReplay(ReplayEntity replay) async => remoteDataSource.createReplay(replay);
+
+  @override
+  Future<void> deleteReplay(ReplayEntity replay) async => remoteDataSource.deleteReplay(replay);
+
+  @override
+  Future<void> likeReplay(ReplayEntity replay) async => remoteDataSource.likeReplay(replay);
+
+  @override
+  Stream<List<ReplayEntity>> readReplays(ReplayEntity replay) => remoteDataSource.readReplays(replay);
+
+  @override
+  Future<void> updateReplay(ReplayEntity replay) async => remoteDataSource.updateReplay(replay);
+
 }

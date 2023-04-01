@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/domain/entities/comment/comment_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:insta_clone/features/domain/replay/replay_entity.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/user/get_current_uid_user_usecase.dart';
+import 'package:insta_clone/features/presentation/cubit/replay/replay_cubit.dart';
+import 'package:insta_clone/features/presentation/page/post/comment/widgets/single_replay_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/form_container_widget.dart';
 import 'package:insta_clone/features/presentation/widgets/profile_widget.dart';
 import 'package:intl/intl.dart';
@@ -41,7 +44,7 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
       });
     });
 
-    // BlocProvider.of<ReplayCubit>(context).getReplays(replay: ReplayEntity(postId: widget.comment.postId, commentId: widget.comment.commentId));
+    BlocProvider.of<ReplayCubit>(context).getReplays(replay: ReplayEntity(postId: widget.comment.postId, commentId: widget.comment.commentId));
 
     super.initState();
   }
@@ -119,8 +122,8 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                         sizeHor(15),
                         GestureDetector(
                           onTap: () {
-                            // widget.comment.totalReplays == 0? toast("no replays") :
-                            // BlocProvider.of<ReplayCubit>(context).getReplays(replay: ReplayEntity(postId: widget.comment.postId, commentId: widget.comment.commentId));
+                            widget.comment.totalReplays == 0? toast("no replays") :
+                            BlocProvider.of<ReplayCubit>(context).getReplays(replay: ReplayEntity(postId: widget.comment.postId, commentId: widget.comment.commentId));
                           },
                           child: Text(
                             "View Replays",
@@ -129,26 +132,26 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                         ),
                       ],
                     ),
-                    // BlocBuilder<ReplayCubit, ReplayState>(
-                    //   builder: (context, replayState) {
-                    //     if (replayState is ReplayLoaded) {
-                    //       final replays = replayState.replays.where((element) => element.commentId == widget.comment.commentId).toList();
-                    //       return ListView.builder(shrinkWrap: true, physics: ScrollPhysics(), itemCount: replays.length, itemBuilder: (context, index) {
-                    //         return SingleReplayWidget(replay: replays[index],
-                    //         onLongPressListener: () {
-                    //           _openBottomModalSheet(context: context, replay: replays[index]);
-                    //         },
-                    //         onLikeClickListener: () {
-                    //           _likeReplay(replay: replays[index]);
-                    //         },
-                    //         );
+                    BlocBuilder<ReplayCubit, ReplayState>(
+                      builder: (context, replayState) {
+                        if (replayState is ReplayLoaded) {
+                          final replays = replayState.replays.where((element) => element.commentId == widget.comment.commentId).toList();
+                          return ListView.builder(shrinkWrap: true, physics: ScrollPhysics(), itemCount: replays.length, itemBuilder: (context, index) {
+                            return SingleReplayWidget(replay: replays[index],
+                            onLongPressListener: () {
+                              _openBottomModalSheet(context: context, replay: replays[index]);
+                            },
+                            onLikeClickListener: () {
+                              _likeReplay(replay: replays[index]);
+                            },
+                            );
 
-                    //       });
+                          });
 
-                    //     }
-                    //     return Center(child: CircularProgressIndicator(),);
-                    //   },
-                    // ),
+                        }
+                        return Center(child: CircularProgressIndicator(),);
+                      },
+                    ),
                     _isUserReplaying == true ? sizeVer(10) : sizeVer(0),
                     _isUserReplaying == true
                         ? Column(
@@ -160,7 +163,7 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                               sizeVer(10),
                               GestureDetector(
                                 onTap: () {
-                                  // _createReplay();
+                                  _createReplay();
                                 },
                                 child: Text(
                                   "Post",
@@ -183,117 +186,117 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
     );
   }
 
-  // _createReplay() {
-  //   BlocProvider.of<ReplayCubit>(context)
-  //       .createReplay(
-  //           replay: ReplayEntity(
-  //     replayId: Uuid().v1(),
-  //     createAt: Timestamp.now(),
-  //     likes: [],
-  //     username: widget.currentUser!.username,
-  //     userProfileUrl: widget.currentUser!.profileUrl,
-  //     creatorUid: widget.currentUser!.uid,
-  //     postId: widget.comment.postId,
-  //     commentId: widget.comment.commentId,
-  //     description: _replayDescriptionController.text,
-  //   ))
-  //       .then((value) {
-  //     setState(() {
-  //       _replayDescriptionController.clear();
-  //       _isUserReplaying = false;
-  //     });
-  //   });
-  // }
+  _createReplay() {
+    BlocProvider.of<ReplayCubit>(context)
+        .createReplay(
+            replay: ReplayEntity(
+      replayId: Uuid().v1(),
+      createAt: Timestamp.now(),
+      likes: [],
+      username: widget.currentUser!.username,
+      userProfileUrl: widget.currentUser!.profileUrl,
+      creatorUid: widget.currentUser!.uid,
+      postId: widget.comment.postId,
+      commentId: widget.comment.commentId,
+      description: _replayDescriptionController.text,
+    ))
+        .then((value) {
+      setState(() {
+        _replayDescriptionController.clear();
+        _isUserReplaying = false;
+      });
+    });
+  }
 
-  // _openBottomModalSheet({required BuildContext context, required ReplayEntity replay}) {
-  //   return showModalBottomSheet(
-  //       context: context,
-  //       builder: (context) {
-  //         return Container(
-  //           height: 150,
-  //           decoration: BoxDecoration(color: backGroundColor.withOpacity(.8)),
-  //           child: SingleChildScrollView(
-  //             child: Container(
-  //               margin: EdgeInsets.symmetric(vertical: 10),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Padding(
-  //                     padding: const EdgeInsets.only(left: 10.0),
-  //                     child: Text(
-  //                       "More Options",
-  //                       style: TextStyle(
-  //                           fontWeight: FontWeight.bold, fontSize: 18, color: primaryColor),
-  //                     ),
-  //                   ),
-  //                   SizedBox(
-  //                     height: 8,
-  //                   ),
-  //                   Divider(
-  //                     thickness: 1,
-  //                     color: secondaryColor,
-  //                   ),
-  //                   SizedBox(
-  //                     height: 8,
-  //                   ),
-  //                   Padding(
-  //                     padding: const EdgeInsets.only(left: 10.0),
-  //                     child: GestureDetector(
-  //                       onTap: () {
-  //                         _deleteReplay(replay: replay);
-  //                       },
-  //                       child: Text(
-  //                         "Delete Replay",
-  //                         style: TextStyle(
-  //                             fontWeight: FontWeight.w500, fontSize: 16, color: primaryColor),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   sizeVer(7),
-  //                   Divider(
-  //                     thickness: 1,
-  //                     color: secondaryColor,
-  //                   ),
-  //                   sizeVer(7),
-  //                   Padding(
-  //                     padding: const EdgeInsets.only(left: 10.0),
-  //                     child: GestureDetector(
-  //                       onTap: () {
-  //                         Navigator.pushNamed(context, PageConst.updateReplayPage,
-  //                             arguments: replay);
+  _openBottomModalSheet({required BuildContext context, required ReplayEntity replay}) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: 150,
+            decoration: BoxDecoration(color: backGroundColor.withOpacity(.8)),
+            child: SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "More Options",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18, color: primaryColor),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Divider(
+                      thickness: 1,
+                      color: secondaryColor,
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          _deleteReplay(replay: replay);
+                        },
+                        child: Text(
+                          "Delete Replay",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16, color: primaryColor),
+                        ),
+                      ),
+                    ),
+                    sizeVer(7),
+                    Divider(
+                      thickness: 1,
+                      color: secondaryColor,
+                    ),
+                    sizeVer(7),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, PageConst.updateReplayPage,
+                              arguments: replay);
 
-  //                         // Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePostPage()));
-  //                       },
-  //                       child: Text(
-  //                         "Update Replay",
-  //                         style: TextStyle(
-  //                             fontWeight: FontWeight.w500, fontSize: 16, color: primaryColor),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   sizeVer(7),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePostPage()));
+                        },
+                        child: Text(
+                          "Update Replay",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 16, color: primaryColor),
+                        ),
+                      ),
+                    ),
+                    sizeVer(7),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
 
-  // _deleteReplay({required ReplayEntity replay}) {
-  //   BlocProvider.of<ReplayCubit>(context).deleteReplay(replay: ReplayEntity(
-  //     postId: replay.postId,
-  //     commentId: replay.commentId,
-  //     replayId: replay.replayId
-  //   ));
-  // }
+  _deleteReplay({required ReplayEntity replay}) {
+    BlocProvider.of<ReplayCubit>(context).deleteReplay(replay: ReplayEntity(
+      postId: replay.postId,
+      commentId: replay.commentId,
+      replayId: replay.replayId
+    ));
+  }
 
-  // _likeReplay({required ReplayEntity replay}) {
-  //   BlocProvider.of<ReplayCubit>(context).likeReplay(replay: ReplayEntity(
-  //       postId: replay.postId,
-  //       commentId: replay.commentId,
-  //       replayId: replay.replayId
-  //   ));
-  // }
+  _likeReplay({required ReplayEntity replay}) {
+    BlocProvider.of<ReplayCubit>(context).likeReplay(replay: ReplayEntity(
+        postId: replay.postId,
+        commentId: replay.commentId,
+        replayId: replay.replayId
+    ));
+  }
 
 }
