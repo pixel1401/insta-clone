@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/storage/delete_file_usecase_to_storage.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/storage/upload_image_usecase_to_storage.dart';
 import 'package:insta_clone/features/presentation/cubit/user/user_cubit.dart';
 import 'package:insta_clone/features/presentation/page/profile/widget/profile_form_widget.dart';
@@ -181,7 +182,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       di
           .sl<UploadImageToStorageUseCase>()
           .call( file : _image, isPost:false, childName :  FirebaseConst.profileImage , imageWeb: _imageWeb)
-          .then((profileUrl) => {_updateUserProfile(profileUrl)});
+          .then((profileUrl)  {
+            _updateUserProfile(profileUrl);
+            // di.sl<DeleteFileToStorageUseCase>().call(fileUrl: widget.userEntity.profileUrl ?? '');
+          });
     } else {
       return _updateUserProfile('');
     }

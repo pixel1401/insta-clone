@@ -205,6 +205,8 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     userCollection.doc(user.uid).update(userInformation);
   }
 
+
+
   // !POSTS
   @override
   Future<void> createPost(PostEntity post) async {
@@ -227,7 +229,19 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
 
     postCollection.doc(post.postId).get().then((value) {
       if (!value.exists) {
-        postCollection.doc(post.postId).set(postModel);
+        postCollection.doc(post.postId).set(postModel).then((newPost)  {
+          final userCollection = firebaseFirestore.collection(FirebaseConst.users).doc(post.creatorUid);
+
+          userCollection.get().then((currentUser) {
+            if(currentUser.exists) {
+              final totalPosts = currentUser.get('totalPosts');
+              userCollection.update({"totalPosts" : totalPosts +  1});
+              return;
+            }
+          });
+
+          return;
+        } );
       } else {
         postCollection.doc(post.postId).update(postModel);
       }
@@ -241,8 +255,25 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     final postsCollection = firebaseFirestore.collection(FirebaseConst.posts);
 
     try {
-      postsCollection.doc(post.postId).delete();
+      postsCollection.doc(post.postId).delete().then((newPost)  {
+          final userCollection = firebaseFirestore.collection(FirebaseConst.users).doc(post.creatorUid);
+          print('${post.creatorUid}  HELLO FERBS');
+          print(post);
+          userCollection.get().then((currentUser) {
+            print(currentUser.exists);
+            if(currentUser.exists) {
+              final totalPosts = currentUser.get('totalPosts');
+              userCollection.update({"totalPosts" : totalPosts -  1});
+              toast('print deleted');
+              return;
+            }
+          });
+
+          this.deleteFileToStorage(fileUrl: post.postImageUrl ?? '');
+
+        } );
     } catch (e) {
+      toast('Eror deleted');
       print('DElete error post  ${e}');
     }
   }
@@ -280,6 +311,13 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
   }
 
   @override
+  Stream<List<PostEntity>> readSinglePost(String postId) {
+    final postCollection = firebaseFirestore.collection(FirebaseConst.posts).orderBy("createAt", descending: true).where("postId", isEqualTo: postId);
+    return postCollection.snapshots().map((querySnapshot) => querySnapshot.docs.map((e) => PostsModel.fromSnapshot(e)).toList() );
+  }
+
+
+  @override
   Future<void> updatePost(PostEntity post) async {
     final postsCollection = firebaseFirestore.collection(FirebaseConst.posts);
 
@@ -291,13 +329,17 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
     if (post.postImageUrl != '' && post.postImageUrl != null)
       postInfo['postImageUrl'] = post.postImageUrl;
 
-    postsCollection.doc(post.postId).update(postInfo).catchError((e) {
+    postsCollection.doc(post.postId).update(postInfo).then((value) {
+      
+    }).catchError((e) {
       print('Update Post error ${e}');
 
       toast('Post dont update');
     });
   }
 
+
+  // COULD STORAGE
   @override
   Future<String> uploadImageToStorage(
       {File? file,
@@ -329,6 +371,16 @@ class FirebaseRemoteDataSourceImpl implements FirebaseRemoteDataSource {
         (await uploadTask.whenComplete(() {})).ref.getDownloadURL();
 
     return await imageUrl;
+  }
+
+  @override
+  Future<void> deleteFileToStorage({required String fileUrl}) async {
+    if(fileUrl.isEmpty) return;
+    try {
+      firebaseStorage.refFromURL(fileUrl).delete();
+    } catch (e) {
+      print('DONT delete fileStorage $fileUrl');
+    }
   }
 
 

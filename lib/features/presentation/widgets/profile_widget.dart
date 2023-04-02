@@ -8,7 +8,7 @@ Widget profileWidget({String? imageUrl, File? image, Uint8List? imageWeb}) {
   print(imageUrl);
   if (imageUrl != null &&
       imageUrl != "" &&
-      (image == null || imageWeb == null)) {
+      (image == null && imageWeb == null)) {
     return CachedNetworkImage(
       imageUrl: "$imageUrl",
       fit: BoxFit.cover,

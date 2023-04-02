@@ -5,6 +5,7 @@ import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/domain/replay/replay_entity.dart';
 import 'package:insta_clone/features/presentation/page/post/comment/edit_replay_page.dart';
+import 'package:insta_clone/features/presentation/page/post/post_detail_page.dart';
 import 'package:insta_clone/features/presentation/page/post/upload_post_page.dart';
 
 import 'features/presentation/page/credential/sign_in_page.dart';
@@ -55,6 +56,12 @@ class OnGenerateRoute {
         } else {
           return routeBuilder(NoPageFound());
         }
+      }
+      case PageConst.postDetailPage: {
+        if (args is String) {
+          return routeBuilder(PostDetailPage(postId: args,));
+        }
+        return routeBuilder(NoPageFound());
       }
       case PageConst.signInPage:
         {

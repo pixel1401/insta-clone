@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_clone/features/presentation/cubit/comment/comment_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/get_single_post/get_single_post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/replay/replay_cubit.dart';
 import 'package:insta_clone/features/presentation/page/credential/sign_in_page.dart';
@@ -39,7 +40,9 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => di.sl<GetSingleUserCubit>()),
             BlocProvider(create: (_) => di.sl<PostCubit>()),
             BlocProvider(create: (_) => di.sl<CommentCubit>()),
-            BlocProvider(create: (_) => di.sl<ReplayCubit>())
+            BlocProvider(create: (_) => di.sl<ReplayCubit>()),
+            BlocProvider(create: (_) => di.sl<GetSinglePostCubit>())
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

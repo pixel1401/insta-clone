@@ -67,7 +67,7 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
                     )
                   ],
                 ),
-                GestureDetector(
+                if(widget.post.creatorUid == _currentUid)  GestureDetector(
                     onTap: ()  {
                       _openBottomModalSheet(context, widget.post);
                     }
@@ -115,6 +115,7 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
             sizeVer(10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   children: [
@@ -151,6 +152,7 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
                 Text('${widget.post.totalLikes} likes' , style: TextStyle(color: primaryColor , fontWeight: FontWeight.bold),),
             sizeVer(10),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   widget.post.username ?? "Username",
@@ -253,7 +255,7 @@ class _SinglePostCardWidgetState extends State<SinglePostCardWidget> {
   }
 
   _deletePost() {
-    BlocProvider.of<PostCubit>(context).deletePost(post: PostEntity(postId: widget.post.postId));
+    BlocProvider.of<PostCubit>(context).deletePost(post: widget.post);
   }
 
   _likePost() {

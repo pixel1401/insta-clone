@@ -10,6 +10,7 @@ import 'package:insta_clone/consts.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
+import 'package:insta_clone/features/domain/usecases/firebase_usecases/storage/delete_file_usecase_to_storage.dart';
 import 'package:insta_clone/features/domain/usecases/firebase_usecases/storage/upload_image_usecase_to_storage.dart';
 import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/user_cubit.dart';
@@ -29,6 +30,9 @@ class UploadPostPage extends StatefulWidget {
 }
 
 class _UploadPostPageState extends State<UploadPostPage> {
+
+  late PageController pageController;
+
   TextEditingController description = TextEditingController();
 
   bool _isUploading = false;
@@ -72,6 +76,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    pageController = PageController();
     if (widget.postUpdate != null) {
       description.text = widget.postUpdate?.description ?? '';
       _imageUploadPost = widget.postUpdate?.postImageUrl ?? '';
@@ -216,7 +221,9 @@ class _UploadPostPageState extends State<UploadPostPage> {
               _uploadPost(profileUrl);
             }else {
               _updatePost(profileUrl);
+              di.sl<DeleteFileToStorageUseCase>().call(fileUrl: _imageUploadPost ?? '');
             }
+
         toast('Upload Post');
       });
     } else if (_imageUploadPost != null && widget.postUpdate != null) {
@@ -281,5 +288,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
       _imageWeb = null;
       _imageUploadPost = null;
     });
+  //  Navigator.pushNamedAndRemoveUntil(
+  //                             context, PageConst.s, (route) => false);
   }
 }

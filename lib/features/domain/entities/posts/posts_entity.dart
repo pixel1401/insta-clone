@@ -37,4 +37,9 @@ class PostEntity extends Equatable {
       totalComments,
       createAt
   ];
+
+
+  @override
+  bool get stringify => true;
+
 }
