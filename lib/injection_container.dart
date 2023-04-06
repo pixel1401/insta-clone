@@ -78,7 +78,7 @@ Future<void> init() async {
       likePostsUseCase: sl.call()));
 
   sl.registerFactory(() => CommentCubit(
-      readCommentUseCase: sl.call(),
+      readCommentsUseCase: sl.call(),
       updateCommentUseCase: sl.call(),
       deleteCommentUseCase: sl.call(),
       createCommentUseCase: sl.call(),

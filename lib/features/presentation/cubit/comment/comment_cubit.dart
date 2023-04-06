@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_clone/features/domain/entities/comment/comment_entity.dart';
@@ -11,66 +13,70 @@ part 'comment_state.dart';
 
 
 class CommentCubit extends Cubit<CommentState> {
-
   final CreateCommentUseCase createCommentUseCase;
-  final ReadCommentUseCase readCommentUseCase;
-  final UpdateCommentUseCase updateCommentUseCase;
   final DeleteCommentUseCase deleteCommentUseCase;
-
   final LikeCommentUseCase likeCommentUseCase;
+  final ReadCommentUseCase readCommentsUseCase;
+  final UpdateCommentUseCase updateCommentUseCase;
+  CommentCubit(
+      {required this.updateCommentUseCase,
+      required this.readCommentsUseCase,
+      required this.likeCommentUseCase,
+      required this.deleteCommentUseCase,
+      required this.createCommentUseCase})
+      : super(CommentInitial());
 
-
-  CommentCubit({required this.createCommentUseCase, required this.readCommentUseCase, required this.updateCommentUseCase, required this.deleteCommentUseCase, required this.likeCommentUseCase}) : super(CommentInitial());
-
-  Future<void> createComment ({required CommentEntity comment}) async {
-    // emit(CommentLoading());
-    try {
-      await createCommentUseCase.call(comment);
-    } catch (e) {
-      emit(CommentFailure());
-    }
-  }
-
-
-  Future<void> readComment({required String postId}) async {
+  Future<void> getComments({required String postId}) async {
     emit(CommentLoading());
     try {
-      var comments = readCommentUseCase.call(postId);
-      comments.listen((event) { 
-          Future<void>.delayed(const Duration(milliseconds: 50));
-          emit(CommentSuccess(comments: event));
+      final streamResponse = readCommentsUseCase.call(postId);
+      streamResponse.listen((comments) {
+        emit(CommentLoaded(comments: comments));
       });
-    } catch (e) {
+    } on SocketException catch (_) {
+      emit(CommentFailure());
+    } catch (_) {
       emit(CommentFailure());
     }
   }
 
-
-  Future<void> updateComment ({required CommentEntity comment}) async {
-    try {
-      await updateCommentUseCase.call(comment);
-    } catch (e) {
-      emit(CommentFailure());
-    }
-  }
-
-
-  Future<void> deleteComment ({required CommentEntity comment}) async {
-    try {
-      await deleteCommentUseCase.call(comment);
-    } catch (e) {
-      emit(CommentFailure());
-    }
-  }
-
-
-  Future<void> likeComment ({required CommentEntity comment}) async {
+  Future<void> likeComment({required CommentEntity comment}) async {
     try {
       await likeCommentUseCase.call(comment);
-    } catch (e) {
+    } on SocketException catch (_) {
+      emit(CommentFailure());
+    } catch (_) {
       emit(CommentFailure());
     }
-  }  
+  }
 
+  Future<void> deleteComment({required CommentEntity comment}) async {
+    try {
+      await deleteCommentUseCase.call(comment);
+    } on SocketException catch (_) {
+      emit(CommentFailure());
+    } catch (_) {
+      emit(CommentFailure());
+    }
+  }
 
+  Future<void> createComment({required CommentEntity comment}) async {
+    try {
+      await createCommentUseCase.call(comment);
+    } on SocketException catch (_) {
+      emit(CommentFailure());
+    } catch (_) {
+      emit(CommentFailure());
+    }
+  }
+
+  Future<void> updateComment({required CommentEntity comment}) async {
+    try {
+      await updateCommentUseCase.call(comment);
+    } on SocketException catch (_) {
+      emit(CommentFailure());
+    } catch (_) {
+      emit(CommentFailure());
+    }
+  }
 }

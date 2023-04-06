@@ -14,11 +14,12 @@ class CommentLoading extends CommentState {
   List<Object> get props => [];
 }
 
-class CommentSuccess extends CommentState {
+class CommentLoaded extends CommentState {
   final List<CommentEntity> comments;
-  CommentSuccess({required this.comments });
+
+  CommentLoaded({required this.comments});
   @override
-  List<Object> get props => [comments]; 
+  List<Object> get props => [comments];
 }
 
 class CommentFailure extends CommentState {

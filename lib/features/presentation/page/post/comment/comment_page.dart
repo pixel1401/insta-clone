@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:insta_clone/consts.dart';
 import 'package:insta_clone/features/domain/entities/app_entity.dart';
 import 'package:insta_clone/features/presentation/cubit/comment/comment_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/get_single_post/get_single_post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/get_single_user/get_single_user_cubit.dart';
 import 'package:insta_clone/features/presentation/page/post/comment/widgets/comment_main_widget.dart';
@@ -26,6 +27,10 @@ class CommentPage extends StatelessWidget {
         ),
         BlocProvider<GetSingleUserCubit>(
           create: (context) => di.sl<GetSingleUserCubit>(),
+        ),
+
+        BlocProvider<GetSinglePostCubit>(
+          create: (context) => di.sl<GetSinglePostCubit>(),
         ),
       ],
       child: CommentMainWidget(appEntity: appEntity),

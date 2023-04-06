@@ -115,8 +115,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   height: 120,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(60),
-                    child:
-                        profileWidget(imageUrl: widget.userEntity.profileUrl , image: _image , imageWeb: _imageWeb),
+                    child: profileWidget(
+                        imageUrl: widget.userEntity.profileUrl,
+                        image: _image,
+                        imageWeb: _imageWeb),
                   ),
                 ),
               ),
@@ -175,29 +177,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   _uploadUserProfileDate() {
-    if (_image != null || _imageWeb != null  ) {
+    if (_image != null || _imageWeb != null) {
       setState(() {
         _isUploading = true;
       });
       di
           .sl<UploadImageToStorageUseCase>()
-          .call( file : _image, isPost:false, childName :  FirebaseConst.profileImage , imageWeb: _imageWeb)
-          .then((profileUrl)  {
-            _updateUserProfile(profileUrl);
-            // di.sl<DeleteFileToStorageUseCase>().call(fileUrl: widget.userEntity.profileUrl ?? '');
-          });
+          .call(
+              file: _image,
+              isPost: false,
+              childName: FirebaseConst.profileImage,
+              imageWeb: _imageWeb)
+          .then((profileUrl) {
+        _updateUserProfile(profileUrl);
+        // di.sl<DeleteFileToStorageUseCase>().call(fileUrl: widget.userEntity.profileUrl ?? '');
+      });
     } else {
       return _updateUserProfile('');
     }
   }
 
   _updateUserProfile(String? imageUrl) {
-    if(_isUploading == false) {
+    if (_isUploading == false) {
       setState(() {
-      _isUploading = true;
-    });
+        _isUploading = true;
+      });
     }
-    
+
     BlocProvider.of<UserCubit>(context)
         .updateUser(
             user: UserEntity(

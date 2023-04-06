@@ -7,6 +7,8 @@ import 'package:insta_clone/features/domain/entities/comment/comment_entity.dart
 import 'package:insta_clone/features/domain/entities/posts/posts_entity.dart';
 import 'package:insta_clone/features/domain/entities/user/user_entity.dart';
 import 'package:insta_clone/features/presentation/cubit/comment/comment_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/post/get_single_post/get_single_post_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/replay/replay_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/user/get_single_user/get_single_user_cubit.dart';
 import 'package:insta_clone/features/presentation/page/post/comment/edit_comment_page.dart';
 import 'package:insta_clone/features/presentation/page/post/comment/widgets/single_comment_widget.dart';
@@ -27,19 +29,16 @@ class CommentMainWidget extends StatefulWidget {
 }
 
 class _CommentMainWidgetState extends State<CommentMainWidget> {
-  PostEntity? singlePost;
-
   @override
   void initState() {
     BlocProvider.of<GetSingleUserCubit>(context)
         .getSingleUser(uid: widget.appEntity.uid!);
 
-    // BlocProvider.of<GetSinglePostCubit>(context).getSinglePost(postId: widget.appEntity.postId!);
+    BlocProvider.of<GetSinglePostCubit>(context)
+        .getSinglePost(postId: widget.appEntity.postId!);
 
-    BlocProvider.of<CommentCubit>(context)
-        .readComment(postId: widget.appEntity.postId!);
-    singlePost = widget.appEntity.postEntity;
-    setState(() {});
+    BlocProvider.of<CommentCubit>(context).getComments(postId: widget.appEntity.postId!);
+
     super.initState();
   }
 
@@ -61,100 +60,106 @@ class _CommentMainWidgetState extends State<CommentMainWidget> {
       ),
       body: BlocBuilder<GetSingleUserCubit, GetSingleUserState>(
         builder: (context, singleUserState) {
-          if (singleUserState is GetSingleUserLoaded && singlePost != null) {
+          if (singleUserState is GetSingleUserLoaded) {
             final singleUser = singleUserState.user;
-            
-            return BlocBuilder<CommentCubit, CommentState>( 
-              // bloc: di.sl<CommentCubit>(),
-              builder: (context, commentState) {
-                if (commentState is CommentSuccess ) {
-                  print(commentState.comments.length);
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 10),
-                        child: Column(
+            return BlocBuilder<GetSinglePostCubit, GetSinglePostState>(
+              builder: (context, singlePostState) {
+                if (singlePostState is GetSinglePostLoaded) {
+                  final singlePost = singlePostState.post;
+                  return BlocBuilder<CommentCubit, CommentState>(
+                    builder: (context, commentState) {
+                      if (commentState is CommentLoaded) {
+                        return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: profileWidget(
-                                        imageUrl: singlePost?.userProfileUrl),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: profileWidget(
+                                              imageUrl:
+                                                  singlePost.userProfileUrl),
+                                        ),
+                                      ),
+                                      sizeHor(10),
+                                      Text(
+                                        "${singlePost.username}",
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: primaryColor),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                sizeHor(10),
-                                Text(
-                                  "${singlePost?.username}",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryColor),
-                                ),
-                              ],
+                                  sizeVer(10),
+                                  Text(
+                                    "${singlePost.description}",
+                                    style: TextStyle(color: primaryColor),
+                                  ),
+                                ],
+                              ),
                             ),
                             sizeVer(10),
-                            Text(
-                              "${singlePost?.description}",
-                              style: TextStyle(color: primaryColor),
+                            Divider(
+                              color: secondaryColor,
                             ),
-                          ],
-                        ),
-                      ),
-                      sizeVer(10),
-                      Divider(
-                        color: secondaryColor,
-                      ),
-                      sizeVer(10),
-                      Expanded(
-                        child: ListView.builder(
-                            itemCount: commentState.comments.length,
-                            itemBuilder: (context, index) {
-                              final singleComment = commentState.comments[index];
-                              return BlocProvider(
-                                create: (context) => di.sl<CommentCubit>(),
-                                child: SingleCommentWidget(
-                                  currentUser: singleUser,
-                                  comment: singleComment,
-                                  onLongPressListener: () {
-                                    _openBottomModalSheet(
-                                      context: context,
-                                      comment: commentState.comments[index],
+                            sizeVer(10),
+                            Expanded(
+                              child: ListView.builder(
+                                  itemCount: commentState.comments.length,
+                                  itemBuilder: (context, index) {
+                                    final singleComment =
+                                        commentState.comments[index];
+                                    return BlocProvider(
+                                      create: (context) => di.sl<ReplayCubit>(),
+                                      child: SingleCommentWidget(
+                                        currentUser: singleUser,
+                                        comment: singleComment,
+                                        onLongPressListener: () {
+                                          _openBottomModalSheet(
+                                            context: context,
+                                            comment:
+                                                commentState.comments[index],
+                                          );
+                                        },
+                                        onLikeClickListener: () {
+                                          _likeComment(
+                                              comment:
+                                                  commentState.comments[index]);
+                                        },
+                                      ),
                                     );
-                                  },
-                                  onLikeClickListener: () {
-                                    _likeComment(comment: commentState.comments[index]);
-                                  },
-                                ),
-                              );
-                            }),
-                      ),
-                      _commentSection(currentUser: singleUser)
-                    ],
-                  );
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
+                                  }),
+                            ),
+                            _commentSection(currentUser: singleUser)
+                          ],
+                        );
+                      }
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
                   );
                 }
-                  
-                
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
               },
             );
-          } 
-          
-            return Center(
-              child: CircularProgressIndicator(
-                color: Colors.red,
-              ),
-            );
-          
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );
@@ -263,7 +268,6 @@ class _CommentMainWidgetState extends State<CommentMainWidget> {
                           _deleteComment(
                               commentId: comment.commentId!,
                               postId: comment.postId!);
-                          Navigator.pop(context);
                         },
                         child: Text(
                           "Delete Comment",
@@ -289,7 +293,12 @@ class _CommentMainWidgetState extends State<CommentMainWidget> {
                           //     arguments: comment);
 
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => EditCommentPage(comment: comment,)) );
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditCommentPage(
+                                        comment: comment,
+                                      )));
                         },
                         child: Text(
                           "Update Comment",
