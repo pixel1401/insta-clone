@@ -32,6 +32,9 @@ class PageConst {
 
   static const String singleUserProfilePage = "singleUserProfilePage";
   static const String postDetailPage = "postDetailPage";
+
+  static const String followingPage = "followingPage";
+  static const String followersPage = "followersPage";
 }
 
 class FirebaseConst {

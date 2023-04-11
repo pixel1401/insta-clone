@@ -44,7 +44,10 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
       });
     });
 
-    BlocProvider.of<ReplayCubit>(context).getReplays(replay: ReplayEntity(postId: widget.comment.postId, commentId: widget.comment.commentId));
+    BlocProvider.of<ReplayCubit>(context).getReplays(
+        replay: ReplayEntity(
+            postId: widget.comment.postId,
+            commentId: widget.comment.commentId));
 
     super.initState();
   }
@@ -54,7 +57,9 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onLongPress: widget.comment.creatorUid == _currentUid? widget.onLongPressListener : null,
+      onLongPress: widget.comment.creatorUid == _currentUid
+          ? widget.onLongPressListener
+          : null,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10),
         child: Row(
@@ -71,7 +76,7 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
             sizeHor(10),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0).copyWith(top: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,7 +86,9 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                         Text(
                           "${widget.comment.username}",
                           style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold, color: primaryColor),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: primaryColor),
                         ),
                         GestureDetector(
                             onTap: widget.onLikeClickListener,
@@ -117,17 +124,25 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                             },
                             child: Text(
                               "Replay",
-                              style: TextStyle(color: darkGreyColor, fontSize: 12),
+                              style:
+                                  TextStyle(color: darkGreyColor, fontSize: 12),
                             )),
                         sizeHor(15),
                         GestureDetector(
                           onTap: () {
-                            widget.comment.totalReplays == 0? toast("no replays") :
-                            BlocProvider.of<ReplayCubit>(context).getReplays(replay: ReplayEntity(postId: widget.comment.postId, commentId: widget.comment.commentId));
+                            widget.comment.totalReplays == 0
+                                ? toast("no replays")
+                                : BlocProvider.of<ReplayCubit>(context)
+                                    .getReplays(
+                                        replay: ReplayEntity(
+                                            postId: widget.comment.postId,
+                                            commentId:
+                                                widget.comment.commentId));
                           },
                           child: Text(
                             "View Replays",
-                            style: TextStyle(color: darkGreyColor, fontSize: 12),
+                            style:
+                                TextStyle(color: darkGreyColor, fontSize: 12),
                           ),
                         ),
                       ],
@@ -135,21 +150,31 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                     BlocBuilder<ReplayCubit, ReplayState>(
                       builder: (context, replayState) {
                         if (replayState is ReplayLoaded) {
-                          final replays = replayState.replays.where((element) => element.commentId == widget.comment.commentId).toList();
-                          return ListView.builder(shrinkWrap: true, physics: ScrollPhysics(), itemCount: replays.length, itemBuilder: (context, index) {
-                            return SingleReplayWidget(replay: replays[index],
-                            onLongPressListener: () {
-                              _openBottomModalSheet(context: context, replay: replays[index]);
-                            },
-                            onLikeClickListener: () {
-                              _likeReplay(replay: replays[index]);
-                            },
-                            );
-
-                          });
-
+                          final replays = replayState.replays
+                              .where((element) =>
+                                  element.commentId == widget.comment.commentId)
+                              .toList();
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              physics: ScrollPhysics(),
+                              itemCount: replays.length,
+                              itemBuilder: (context, index) {
+                                return SingleReplayWidget(
+                                  replay: replays[index],
+                                  onLongPressListener: () {
+                                    _openBottomModalSheet(
+                                        context: context,
+                                        replay: replays[index]);
+                                  },
+                                  onLikeClickListener: () {
+                                    _likeReplay(replay: replays[index]);
+                                  },
+                                );
+                              });
                         }
-                        return Center(child: CircularProgressIndicator(),);
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
                       },
                     ),
                     _isUserReplaying == true ? sizeVer(10) : sizeVer(0),
@@ -208,7 +233,8 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
     });
   }
 
-  _openBottomModalSheet({required BuildContext context, required ReplayEntity replay}) {
+  _openBottomModalSheet(
+      {required BuildContext context, required ReplayEntity replay}) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -226,7 +252,9 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                       child: Text(
                         "More Options",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18, color: primaryColor),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: primaryColor),
                       ),
                     ),
                     SizedBox(
@@ -248,7 +276,9 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                         child: Text(
                           "Delete Replay",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 16, color: primaryColor),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: primaryColor),
                         ),
                       ),
                     ),
@@ -262,7 +292,8 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                       padding: const EdgeInsets.only(left: 10.0),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, PageConst.updateReplayPage,
+                          Navigator.pushNamed(
+                              context, PageConst.updateReplayPage,
                               arguments: replay);
 
                           // Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePostPage()));
@@ -270,7 +301,9 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
                         child: Text(
                           "Update Replay",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 16, color: primaryColor),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: primaryColor),
                         ),
                       ),
                     ),
@@ -284,19 +317,18 @@ class _SingleCommentWidgetState extends State<SingleCommentWidget> {
   }
 
   _deleteReplay({required ReplayEntity replay}) {
-    BlocProvider.of<ReplayCubit>(context).deleteReplay(replay: ReplayEntity(
-      postId: replay.postId,
-      commentId: replay.commentId,
-      replayId: replay.replayId
-    ));
+    BlocProvider.of<ReplayCubit>(context).deleteReplay(
+        replay: ReplayEntity(
+            postId: replay.postId,
+            commentId: replay.commentId,
+            replayId: replay.replayId));
   }
 
   _likeReplay({required ReplayEntity replay}) {
-    BlocProvider.of<ReplayCubit>(context).likeReplay(replay: ReplayEntity(
-        postId: replay.postId,
-        commentId: replay.commentId,
-        replayId: replay.replayId
-    ));
+    BlocProvider.of<ReplayCubit>(context).likeReplay(
+        replay: ReplayEntity(
+            postId: replay.postId,
+            commentId: replay.commentId,
+            replayId: replay.replayId));
   }
-
 }

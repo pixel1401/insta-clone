@@ -7,6 +7,9 @@ import 'package:insta_clone/features/domain/replay/replay_entity.dart';
 import 'package:insta_clone/features/presentation/page/post/comment/edit_replay_page.dart';
 import 'package:insta_clone/features/presentation/page/post/post_detail_page.dart';
 import 'package:insta_clone/features/presentation/page/post/upload_post_page.dart';
+import 'package:insta_clone/features/presentation/page/profile/followers_page.dart';
+import 'package:insta_clone/features/presentation/page/profile/following_page.dart';
+import 'package:insta_clone/features/presentation/page/profile/single_user_profile_page.dart';
 
 import 'features/presentation/page/credential/sign_in_page.dart';
 import 'features/presentation/page/credential/sign_up_page.dart';
@@ -74,6 +77,33 @@ class OnGenerateRoute {
       case PageConst.signUpPage:
         {
           return routeBuilder(SignUpPage());
+        }
+      case PageConst.singleUserProfilePage:
+        {
+          if (args is String) {
+            return routeBuilder(SingleUserProfilePage(
+              otherUserId: args,
+            ));
+          }
+          return routeBuilder(NoPageFound());
+        }
+        case PageConst.followingPage:
+        {
+          if (args is UserEntity) {
+            return routeBuilder(FollowingPage(
+              user: args,
+            ));
+          }
+          return routeBuilder(NoPageFound());
+        }
+      case PageConst.followersPage:
+        {
+          if (args is UserEntity) {
+            return routeBuilder(FollowersPage(
+              user: args,
+            ));
+          }
+          return routeBuilder(NoPageFound());
         }
       default:
         {

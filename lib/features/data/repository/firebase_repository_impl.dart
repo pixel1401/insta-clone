@@ -45,7 +45,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<void> updateUser(UserEntity user) async =>
       remoteDataSource.updateUser(user);
 
-  
+  @override
+  Future<void> followUnFollowUser(UserEntity user) =>
+      remoteDataSource.followUnFollowUser(user);
+
+  @override
+  Stream<List<UserEntity>> getSingleOtherUser(String otherUid) =>
+      remoteDataSource.getSingleOtherUser(otherUid);
+
   // STORAGE
   @override
   Future<String> uploadImageToStorage(
@@ -63,7 +70,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     return remoteDataSource.deleteFileToStorage(fileUrl: fileUrl);
   }
 
-
   @override
   Future<void> createPost(PostEntity post) async =>
       remoteDataSource.createPost(post);
@@ -80,16 +86,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Stream<List<PostEntity>> readPost(PostEntity post) {
     return remoteDataSource.readPost(post);
   }
-  
 
   @override
-  Stream<List<PostEntity>> readSinglePost(String postId) => remoteDataSource.readSinglePost(postId);
+  Stream<List<PostEntity>> readSinglePost(String postId) =>
+      remoteDataSource.readSinglePost(postId);
 
   @override
   Future<void> updatePost(PostEntity post) async =>
       remoteDataSource.updatePost(post);
-
-
 
   // COMMENT
   @override
@@ -110,7 +114,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Stream<List<CommentEntity>> readComments(String postId) {
-   return remoteDataSource.readComments(postId);
+    return remoteDataSource.readComments(postId);
   }
 
   @override
@@ -118,24 +122,24 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     return remoteDataSource.updateComment(comment);
   }
 
-
-
   // REPLAY
   @override
-  Future<void> createReplay(ReplayEntity replay) async => remoteDataSource.createReplay(replay);
+  Future<void> createReplay(ReplayEntity replay) async =>
+      remoteDataSource.createReplay(replay);
 
   @override
-  Future<void> deleteReplay(ReplayEntity replay) async => remoteDataSource.deleteReplay(replay);
+  Future<void> deleteReplay(ReplayEntity replay) async =>
+      remoteDataSource.deleteReplay(replay);
 
   @override
-  Future<void> likeReplay(ReplayEntity replay) async => remoteDataSource.likeReplay(replay);
+  Future<void> likeReplay(ReplayEntity replay) async =>
+      remoteDataSource.likeReplay(replay);
 
   @override
-  Stream<List<ReplayEntity>> readReplays(ReplayEntity replay) => remoteDataSource.readReplays(replay);
+  Stream<List<ReplayEntity>> readReplays(ReplayEntity replay) =>
+      remoteDataSource.readReplays(replay);
 
   @override
-  Future<void> updateReplay(ReplayEntity replay) async => remoteDataSource.updateReplay(replay);
-  
-  
-
+  Future<void> updateReplay(ReplayEntity replay) async =>
+      remoteDataSource.updateReplay(replay);
 }

@@ -4,6 +4,7 @@ import 'package:insta_clone/features/presentation/cubit/comment/comment_cubit.da
 import 'package:insta_clone/features/presentation/cubit/post/get_single_post/get_single_post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/post/post_cubit.dart';
 import 'package:insta_clone/features/presentation/cubit/replay/replay_cubit.dart';
+import 'package:insta_clone/features/presentation/cubit/user/get_single_other_user/get_single_other_user_cubit.dart';
 import 'package:insta_clone/features/presentation/page/credential/sign_in_page.dart';
 import 'package:insta_clone/on_generate_route.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,7 +42,8 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => di.sl<PostCubit>()),
             BlocProvider(create: (_) => di.sl<CommentCubit>()),
             BlocProvider(create: (_) => di.sl<ReplayCubit>()),
-            BlocProvider(create: (_) => di.sl<GetSinglePostCubit>())
+            BlocProvider(create: (_) => di.sl<GetSinglePostCubit>()),
+            BlocProvider(create: (_) => di.sl<GetSingleOtherUserCubit>()),
 
       ],
       child: MaterialApp(
